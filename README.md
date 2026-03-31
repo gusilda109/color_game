@@ -1,42 +1,112 @@
 # Chromix 🎨
 
-**A browser-based pixel color-mixing game.**
+**Chromix** — это браузерная игра на смешивание цветов, в которой игрок пытается как можно точнее восстановить исходное изображение.
 
-Mix colors on your palette, paint zones on the canvas, and see how close you got to the original image.
+Игрок выбирает или смешивает цвета на палитре, закрашивает области на холсте и в конце получает результат: визуальное сравнение, тепловую карту точности и итоговый счёт.
 
-## How to play
+## Скриншот
 
-1. Open `index.html` in any modern browser — no server needed.
-2. Choose an image, palette size, brush style, and difficulty.
-3. Select a color from the palette (or mix up to 3 colors to create a new one).
-4. Click zones on the canvas to paint them.
-5. Hit **Завершить** to see your result — accuracy heatmap and score.
+![Chromix menu](assets/menu.png)
 
-## Project structure
+---
+
+## Возможности
+
+- запуск прямо в браузере без сервера;
+- выбор изображения, размера палитры, стиля кисти и сложности;
+- смешивание до 3 цветов для получения нового оттенка;
+- закрашивание пикселей на холсте;
+- экран завершения с оценкой точности и итоговым результатом.
+
+---
+
+## Как играть
+
+1. Откройте игру в браузере.
+2. Выберите изображение, размер палитры, стиль кисти и уровень сложности.
+3. Выберите цвет из палитры или смешайте до 3 цветов, чтобы получить новый.
+4. Кликайте по пикселям на холсте и раскрашивайте изображение.
+5. Нажмите **«Завершить»**, чтобы увидеть:
+   - итоговую раскраску;
+   - тепловую карту точности;
+   - финальный счёт.
+
+---
+
+## Локальный запуск
+
+Проект не требует сборки и не использует сторонние зависимости.
+
+Достаточно открыть файл `index.html` в любом современном браузере:
+
+```bash
+open index.html
+```
+
+---
+
+## Структура проекта
 
 ```
 chromix/
-├── index.html          # Entry point
+├── index.html          # Главная HTML-страница приложения
 ├── css/
-│   └── style.css       # All styles
+│   └── style.css       # Все стили проекта
 ├── js/
-│   ├── images.js       # Built-in image definitions & pixel color generators
-│   ├── palette.js      # Palette generation, color mixing, zone generation
-│   ├── game.js         # Game state, canvas rendering, paint logic
-│   ├── ui.js           # UI rendering (palette, mix slots, result screen)
-│   └── main.js         # Entry point — wires up start screen & option groups
-└── assets/             # Static assets (future: custom level images, sounds)
+│   ├── images.js       # Встроенные изображения и генерация цветов пикселей
+│   ├── palette.js      # Палитра, смешивание цветов, генерация зон
+│   ├── game.js         # Состояние игры, холст, логика закрашивания
+│   ├── ui.js           # Интерфейс: палитра, слоты смешивания, экран результата
+│   └── main.js         # Точка входа, инициализация приложения
+└── assets/             # Статические ресурсы
 ```
 
-## Tech stack
+---
 
-- Vanilla HTML / CSS / JavaScript — zero dependencies
-- Google Fonts (Playfair Display, DM Mono, Lato)
-- Canvas 2D API for rendering
+## Технологии
 
-## Planned features
+* HTML
+* CSS
+* Vanilla JavaScript
+* Canvas 2D API
+* Google Fonts
 
-- [ ] More built-in images
-- [ ] Peek at original (timed hint)
-- [ ] High-score / local storage persistence
-- [ ] Mobile touch support improvements
+Проект написан без фреймворков и внешних JS-зависимостей.
+
+---
+
+## Деплой
+
+Игра развёрнута как статический сайт на Ubuntu 22.04 + Nginx.
+
+Доступ по IP-адресу сервера:
+
+```
+http://65.21.25.175
+```
+
+Пример конфигурации Nginx
+
+```
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name 65.21.25.175;
+
+    root /var/www/chromix;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+```
+---
+
+# Авторы
+
+**Михаил Кошкин**
+
+**Максим Ерченко**
+
