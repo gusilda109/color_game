@@ -462,10 +462,11 @@ body {
 #peek-overlay {
   position: absolute;
   inset: 0;
-  opacity: 0;
+  opacity: 0;                    /* по умолчанию скрыт */
   pointer-events: none;
-  transition: opacity 0.2s;
+  transition: opacity 0.3s ease;
   image-rendering: pixelated;
+  z-index: 20;                    /* чтобы был поверх игрового canvas */
 }
 #peek-overlay.visible { opacity: 0.85; }
 

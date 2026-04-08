@@ -1,8 +1,4 @@
-/**
- * palette.js
- * Color utilities, palette generation.
- * Zone generation removed — game now works pixel-by-pixel.
- */
+
 
 const LEVELS = {
   easy:   { pixelSize: 10 },
@@ -27,38 +23,31 @@ function mixColors(colors) {
   };
 }
 
-/**
- * Samples `numColors` representative colors from the image color map
- * using a simple grid-sampled k-means-like approach.
- */
-function generatePalette(colorMap, numColors, w, h) {
-  // Sample pixels on a grid to get candidate colors
-  const candidates = [];
-  const step = Math.max(1, Math.floor(Math.sqrt(w * h / (numColors * 4))));
-  for (let row = 0; row < h; row += step)
-    for (let col = 0; col < w; col += step)
-      candidates.push({ ...colorMap[row][col] });
 
-  // Simple furthest-point sampling for variety
+const BASE_PALETTE = [
+  { r: 220, g: 20,  b: 20,  mixed: false },   // 1. Красный
+  { r: 255, g: 220, b: 0,   mixed: false },   // 2. Жёлтый
+  { r: 30,  g: 60,  b: 220, mixed: false },   // 3. Синий
+
+  { r: 0,   g: 180, b: 40,  mixed: false },   // 4. Зелёный
+  { r: 200, g: 50,  b: 200, mixed: false },   // 5. Пурпурный
+  { r: 255, g: 140, b: 0,   mixed: false },   // 6. Оранжевый
+
+  { r: 139, g: 69,  b: 19,  mixed: false },   // 7. Коричневый
+  { r: 50,  g: 50,  b: 50,  mixed: false },   // 8. Тёмно-серый
+  { r: 220, g: 220, b: 220, mixed: false },   // 9. Светло-серый
+
+  { r: 255, g: 100, b: 180, mixed: false },   // 10. Розовый
+  { r: 0,   g: 200, b: 200, mixed: false },   // 11. Бирюзовый
+  { r: 100, g: 50,  b: 0,   mixed: false },   // 12. Тёмно-коричневый
+];
+
+function generatePalette(colorMap, numColors, w, h) {     
   const palette = [];
-  // Start with a random candidate
-  palette.push({ ...candidates[Math.floor(Math.random() * candidates.length)], mixed: false });
 
-  for (let i = 1; i < numColors; i++) {
-    // Pick the candidate furthest from all existing palette colors
-    let best = null, bestDist = -1;
-    for (const cand of candidates) {
-      const minDist = Math.min(...palette.map(p => colorDistance(p, cand)));
-      if (minDist > bestDist) { bestDist = minDist; best = cand; }
-    }
-    if (best) palette.push({ ...best, mixed: false });
+  for (let i = 0; i < numColors && i < BASE_PALETTE.length; i++) {
+    palette.push({ ...BASE_PALETTE[i] });
   }
 
-  // Add slight variation so palette is not identical to original pixels
-  return palette.map(c => ({
-    r: Math.max(0, Math.min(255, c.r + Math.floor((Math.random() - 0.5) * 30))),
-    g: Math.max(0, Math.min(255, c.g + Math.floor((Math.random() - 0.5) * 30))),
-    b: Math.max(0, Math.min(255, c.b + Math.floor((Math.random() - 0.5) * 30))),
-    mixed: false,
-  }));
+  return palette;
 }

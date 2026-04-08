@@ -1,12 +1,7 @@
-/**
- * game.js
- * Core game state and canvas rendering (pixel-by-pixel, 64×64).
- */
-
 const gameCanvas = document.getElementById('game-canvas');
 const ctx        = gameCanvas.getContext('2d');
 
-/** Central mutable game state */
+
 const state = {
   imageIdx:          0,
   numColors:         6,
@@ -27,7 +22,6 @@ const state = {
   _isDrawing:        false,
 };
 
-/* ── Init ───────────────────────────────────────────────────── */
 
 function initGame() {
   const img      = IMAGES[state.imageIdx];
@@ -48,7 +42,6 @@ function initGame() {
   gameCanvas.style.width  = pw + 'px';
   gameCanvas.style.height = ph + 'px';
 
-  // Build peek overlay canvas
   _buildPeekOverlay();
 }
 
@@ -58,13 +51,20 @@ function _buildPeekOverlay() {
     overlay = document.createElement('canvas');
     overlay.id = 'peek-overlay';
     document.getElementById('canvas-wrapper').appendChild(overlay);
+
+    overlay.style.position = 'absolute';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.pointerEvents = 'none';
   }
+  
   overlay.width        = gameCanvas.width;
   overlay.height       = gameCanvas.height;
   overlay.style.width  = gameCanvas.style.width;
   overlay.style.height = gameCanvas.style.height;
 
   const oc = overlay.getContext('2d');
+  oc.clearRect(0, 0, overlay.width, overlay.height);
   for (let row = 0; row < CANVAS_H; row++) {
     for (let col = 0; col < CANVAS_W; col++) {
       oc.fillStyle = rgbStr(state.colorMap[row][col]);
@@ -73,7 +73,7 @@ function _buildPeekOverlay() {
   }
 }
 
-/* ── Rendering ──────────────────────────────────────────────── */
+/* рендер */
 
 function renderGame() {
   const { pixelPainted, pixelSize, paintStyle } = state;
@@ -124,7 +124,7 @@ function _updateProgress() {
   document.getElementById('progress-info').textContent = `${Math.round(painted / total * 100)}% закрашено`;
 }
 
-/* ── Paint actions ──────────────────────────────────────────── */
+/*рисование */
 
 function paintPixel(col, row) {
   if (col < 0 || col >= CANVAS_W || row < 0 || row >= CANVAS_H) return;
@@ -175,7 +175,7 @@ function _floodFill(startCol, startRow, fillColor) {
   }
 }
 
-/* ── Mouse / touch events ───────────────────────────────────── */
+/* мышь */
 
 function _canvasCoords(e) {
   const rect   = gameCanvas.getBoundingClientRect();
@@ -219,7 +219,7 @@ gameCanvas.addEventListener('touchmove', e => {
 
 window.addEventListener('touchend', () => { state._isDrawing = false; });
 
-/* ── Result calculation ─────────────────────────────────────── */
+/* подсчет */
 
 function calculateResult() {
   const { pixelPainted, colorMap } = state;
@@ -233,14 +233,17 @@ function calculateResult() {
     const [col, row] = key.split(',').map(Number);
     totalDist += colorDistance(colorMap[row][col], pixelPainted[key]);
   }
-
-  const avgDist  = painted.length ? totalDist / painted.length : maxDist;
+  
+  let avgDist  = painted.length ? totalDist / painted.length : maxDist;
   const accuracy = Math.max(0, 1 - avgDist / maxDist);
 
+  totalDist += maxDist * (total - painted.length)
+  avgDist  = painted.length ? totalDist / total : maxDist;
+  const score = Math.max(0, 1 - avgDist / maxDist);
   return {
     accuracy: Math.round(accuracy * 100),
     coverage: Math.round(coverage * 100),
-    total:    Math.round((accuracy * 0.6 + coverage * 0.4) * 100),
+    total:    Math.round(score * 100),
     maxDist,
   };
 }
