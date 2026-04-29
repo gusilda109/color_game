@@ -1,11 +1,3 @@
-
-
-const LEVELS = {
-  easy:   { pixelSize: 10 },
-  medium: { pixelSize: 8  },
-  hard:   { pixelSize: 6  },
-};
-
 function rgbStr(c) {
   return `rgb(${c.r},${c.g},${c.b})`;
 }
@@ -16,10 +8,20 @@ function colorDistance(a, b) {
 
 function mixColors(colors) {
   if (!colors.length) return { r: 200, g: 200, b: 200 };
+
+  // начинаем с первого цвета
+  let result = [colors[0].r, colors[0].g, colors[0].b];
+
+  // последовательно смешиваем остальные
+  for (let i = 1; i < colors.length; i++) {
+    const c = colors[i];
+    result = mixbox.lerp(result, [c.r, c.g, c.b], 1 / (i + 1));
+  }
+
   return {
-    r: Math.round(colors.reduce((a, c) => a + c.r, 0) / colors.length),
-    g: Math.round(colors.reduce((a, c) => a + c.g, 0) / colors.length),
-    b: Math.round(colors.reduce((a, c) => a + c.b, 0) / colors.length),
+    r: Math.round(result[0]),
+    g: Math.round(result[1]),
+    b: Math.round(result[2]),
   };
 }
 

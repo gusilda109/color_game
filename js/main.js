@@ -12,7 +12,6 @@ function initOptionGroup(groupId, stateKey, transform) {
 initOptionGroup('img-opts',    'imageIdx',   v => Number(v));
 initOptionGroup('colors-opts', 'numColors',  v => Number(v));
 initOptionGroup('style-opts',  'paintStyle', null);
-initOptionGroup('level-opts',  'level',      null);
 
 document.getElementById('start-btn').addEventListener('click', startNewGame);
 

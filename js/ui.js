@@ -74,7 +74,6 @@ document.getElementById('preview-ready-btn').addEventListener('click', () => {
 function _launchGame() {
   const img = IMAGES[state.imageIdx];
   document.getElementById('canvas-title').textContent = img.name;
-  document.getElementById('level-badge').textContent  = state.level.toUpperCase();
   document.getElementById('selected-swatch').style.background = '#ccc';
   document.getElementById('selected-label').textContent = 'Выберите цвет';
 
@@ -214,9 +213,6 @@ function buildResultScreen() {
   document.getElementById('result-title').textContent =
     result.accuracy >= 70 ? `Отлично! ${img.name}` :
     result.accuracy >= 45 ? 'Хорошая работа!'       : 'Продолжайте практиковаться!';
-
-  document.getElementById('result-subtitle').textContent =
-    `${img.name} · ${{ easy: 'Лёгкий', medium: 'Средний', hard: 'Сложный' }[state.level]}`;
 
   const grade = result.accuracy >= 70 ? 'great' : result.accuracy >= 45 ? 'good' : 'poor';
 

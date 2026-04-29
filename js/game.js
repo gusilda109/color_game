@@ -6,7 +6,6 @@ const state = {
   imageIdx:          0,
   numColors:         6,
   paintStyle:        'watercolor',
-  level:             'medium',
 
   palette:           [],
   selectedPaletteIdx: -1,
@@ -25,9 +24,8 @@ const state = {
 
 function initGame() {
   const img      = IMAGES[state.imageIdx];
-  const levelCfg = LEVELS[state.level];
 
-  state.pixelSize    = levelCfg.pixelSize;
+  state.pixelSize    = 15;
   state.colorMap     = generateImageColors(img.type, CANVAS_W, CANVAS_H);
   state.pixelPainted = {};
   state.selectedPaletteIdx = -1;
@@ -223,27 +221,41 @@ window.addEventListener('touchend', () => { state._isDrawing = false; });
 
 function calculateResult() {
   const { pixelPainted, colorMap } = state;
-  const total    = CANVAS_W * CANVAS_H;
-  const painted  = Object.keys(pixelPainted);
-  const coverage = painted.length / total;
-  const maxDist  = Math.sqrt(3) * 255;
+  const total = CANVAS_W * CANVAS_H;
+  const paintedKeys = Object.keys(pixelPainted);
+  const paintedCount = paintedKeys.length;
+  const coverage = paintedCount / total;
 
-  let totalDist = 0;
-  for (const key of painted) {
+  // Пороги для оценки точности (можно менять под свои нужды)
+  const PERFECT_THRESHOLD = 30;   // расстояние меньше 30 -> 1 балл
+  const GOOD_THRESHOLD    = 80;   // расстояние меньше 80 -> 0.5 балла
+  // иначе 0 баллов
+
+  let sumScorePainted = 0; // сумма баллов только по закрашенным пикселям
+  let sumScoreTotal = 0;   // сумма баллов по всем пикселям (незакрашенные дают 0)
+
+  // Считаем баллы для закрашенных пикселей
+  for (const key of paintedKeys) {
     const [col, row] = key.split(',').map(Number);
-    totalDist += colorDistance(colorMap[row][col], pixelPainted[key]);
+    const dist = colorDistance(colorMap[row][col], pixelPainted[key]);
+    let points = 0;
+    if (dist < PERFECT_THRESHOLD) {
+      points = 1;
+    } else if (dist < GOOD_THRESHOLD) {
+      points = 0.5;
+    }
+    sumScorePainted += points;
+    sumScoreTotal += points;
   }
-  
-  let avgDist  = painted.length ? totalDist / painted.length : maxDist;
-  const accuracy = Math.max(0, 1 - avgDist / maxDist);
 
-  totalDist += maxDist * (total - painted.length)
-  avgDist  = painted.length ? totalDist / total : maxDist;
-  const score = Math.max(0, 1 - avgDist / maxDist);
+  // Незакрашенные пиксели в sumScoreTotal уже дают 0 (мы их не добавляем)
+
+  const accuracy = paintedCount === 0 ? 0 : (sumScorePainted / paintedCount) * 100;
+  const totalScore = (sumScoreTotal / total) * 100;
+
   return {
-    accuracy: Math.round(accuracy * 100),
+    accuracy: Math.round(accuracy),
     coverage: Math.round(coverage * 100),
-    total:    Math.round(score * 100),
-    maxDist,
+    total:    Math.round(totalScore),
   };
 }
