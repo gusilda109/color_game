@@ -12,17 +12,102 @@ const IMAGES = [
   { name: 'Осенний лес',      type: 'forest' },
   { name: 'Морской берег',    type: 'ocean'  },
   { name: 'Ночной город',     type: 'city'   },
+  // index 4 — слот для пользовательской картинки.
+  // colorMap заполняется в момент загрузки файла (см. main.js).
+  { name: 'Моя картинка',     type: 'custom', colorMap: null },
 ];
 
 /**
  * Returns a 2D array [row][col] of {r,g,b} for the given image type.
  */
 function generateImageColors(type, w, h) {
+  // Пользовательская картинка: используем уже подготовленную карту цветов.
+  if (type === 'custom') {
+    const ci = IMAGES.find(im => im.type === 'custom');
+    if (ci && ci.colorMap) return ci.colorMap;
+    // запасной вариант — пустой "бумажный" холст
+    const fallback = [];
+    for (let row = 0; row < h; row++) {
+      fallback.push([]);
+      for (let col = 0; col < w; col++) fallback[row].push({ r: 230, g: 225, b: 218 });
+    }
+    return fallback;
+  }
+
   const map = [];
   for (let row = 0; row < h; row++) {
     map.push([]);
     for (let col = 0; col < w; col++) {
       map[row].push(getPixelColor(type, col, row, w, h));
+    }
+  }
+  return map;
+}
+
+/**
+ * Преобразует загруженное изображение в карту цветов targetW×targetH.
+ * Уменьшение делается max pooling'ом: для каждой ячейки результата берётся
+ * блок исходных пикселей, и по каждому каналу (R, G, B) берётся максимум.
+ *
+ * reduce: 'max' (по умолчанию, как просили) или 'avg' (усреднение — мягче для фото).
+ */
+function imageToColorMap(imgEl, targetW, targetH, reduce = 'max') {
+  // 1. Рисуем исходник во временный canvas (с ограничением размера, чтобы не тормозило).
+  const maxSide = 512;
+  let sw = imgEl.naturalWidth  || imgEl.width;
+  let sh = imgEl.naturalHeight || imgEl.height;
+  const scale = Math.min(1, maxSide / Math.max(sw, sh));
+  sw = Math.max(1, Math.round(sw * scale));
+  sh = Math.max(1, Math.round(sh * scale));
+
+  const tmp  = document.createElement('canvas');
+  tmp.width  = sw;
+  tmp.height = sh;
+  const tctx = tmp.getContext('2d');
+  // Прозрачные пиксели (PNG с альфой) станут цветом бумаги, а не чёрными.
+  tctx.fillStyle = '#f9f5ee';
+  tctx.fillRect(0, 0, sw, sh);
+  // Для пиксель-арта отключаем сглаживание — края остаются чёткими.
+  tctx.imageSmoothingEnabled = false;
+  tctx.drawImage(imgEl, 0, 0, sw, sh);
+
+  const data = tctx.getImageData(0, 0, sw, sh).data;
+
+  // 2. Пулинг по блокам.
+  const map = [];
+  for (let row = 0; row < targetH; row++) {
+    map.push([]);
+    for (let col = 0; col < targetW; col++) {
+      const x0 = Math.floor(col * sw / targetW);
+      const x1 = Math.max(x0 + 1, Math.floor((col + 1) * sw / targetW));
+      const y0 = Math.floor(row * sh / targetH);
+      const y1 = Math.max(y0 + 1, Math.floor((row + 1) * sh / targetH));
+
+      let r, g, b;
+      if (reduce === 'avg') {
+        let sr = 0, sg = 0, sb = 0, n = 0;
+        for (let y = y0; y < y1; y++) {
+          for (let x = x0; x < x1; x++) {
+            const i = (y * sw + x) * 4;
+            sr += data[i]; sg += data[i + 1]; sb += data[i + 2]; n++;
+          }
+        }
+        r = sr / n; g = sg / n; b = sb / n;
+      } else {
+        // MAX POOLING — максимум по каждому каналу внутри блока.
+        let mr = 0, mg = 0, mb = 0;
+        for (let y = y0; y < y1; y++) {
+          for (let x = x0; x < x1; x++) {
+            const i = (y * sw + x) * 4;
+            if (data[i]     > mr) mr = data[i];
+            if (data[i + 1] > mg) mg = data[i + 1];
+            if (data[i + 2] > mb) mb = data[i + 2];
+          }
+        }
+        r = mr; g = mg; b = mb;
+      }
+
+      map[row].push({ r: Math.round(r), g: Math.round(g), b: Math.round(b) });
     }
   }
   return map;

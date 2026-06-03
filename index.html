@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chromix — Paint by Color</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
@@ -16,8 +17,59 @@
   <!-- ═══════════════════════════ START SCREEN ═══════════════════════════ -->
   <div class="screen active" id="start-screen">
     <div class="start-card">
+  <div class="logo-row">
+    <svg class="logo-mark" viewBox="34 20 168 162" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" aria-label="Кошкин и Ерченко">
+      <g fill="#c0392b">
+        <rect x="64" y="34" width="48" height="12"/><rect x="52" y="46" width="72" height="12"/>
+        <rect x="40" y="58" width="96" height="12"/><rect x="40" y="70" width="96" height="12"/>
+        <rect x="40" y="82" width="96" height="12"/><rect x="40" y="94" width="96" height="12"/>
+        <rect x="40" y="106" width="96" height="12"/><rect x="52" y="118" width="72" height="12"/>
+        <rect x="64" y="130" width="48" height="12"/>
+        <rect x="76" y="142" width="14" height="18"/><rect x="78" y="166" width="10" height="10"/>
+      </g>
+      <g fill="#2d54d8">
+        <rect x="124" y="34" width="48" height="12"/><rect x="112" y="46" width="72" height="12"/>
+        <rect x="100" y="58" width="96" height="12"/><rect x="100" y="70" width="96" height="12"/>
+        <rect x="100" y="82" width="96" height="12"/><rect x="100" y="94" width="96" height="12"/>
+        <rect x="100" y="106" width="96" height="12"/><rect x="112" y="118" width="72" height="12"/>
+        <rect x="124" y="130" width="48" height="12"/>
+        <rect x="160" y="142" width="14" height="16"/>
+      </g>
+      <g fill="#5b2a86">
+        <rect x="112" y="46" width="12" height="12"/><rect x="100" y="58" width="36" height="12"/>
+        <rect x="100" y="70" width="36" height="12"/><rect x="100" y="82" width="36" height="12"/>
+        <rect x="100" y="94" width="36" height="12"/><rect x="100" y="106" width="36" height="12"/>
+        <rect x="112" y="118" width="12" height="12"/>
+        <rect x="110" y="142" width="16" height="22"/>
+      </g>
+      <rect x="52" y="58" width="36" height="36" fill="#faf7f2"/><rect x="70" y="76" width="14" height="14" fill="#1a1714"/>
+      <rect x="148" y="58" width="36" height="36" fill="#faf7f2"/><rect x="152" y="72" width="14" height="14" fill="#1a1714"/>
+      <rect x="108" y="26" width="16" height="16" fill="#faf7f2"/><rect x="112" y="31" width="8" height="8" fill="#1a1714"/>
+      <g fill="#faf7f2">
+        <rect x="50" y="96" width="9" height="9"/><rect x="86" y="96" width="9" height="9"/>
+        <rect x="50" y="105" width="9" height="9"/><rect x="77" y="105" width="9" height="9"/>
+        <rect x="50" y="114" width="27" height="9"/>
+        <rect x="50" y="123" width="9" height="9"/><rect x="77" y="123" width="9" height="9"/>
+        <rect x="50" y="132" width="9" height="9"/><rect x="86" y="132" width="9" height="9"/>
+      </g>
+      <g fill="#faf7f2">
+        <rect x="96" y="66" width="9" height="9"/><rect x="132" y="66" width="9" height="9"/>
+        <rect x="96" y="75" width="18" height="9"/><rect x="123" y="75" width="18" height="9"/>
+        <rect x="96" y="84" width="9" height="9"/><rect x="114" y="84" width="9" height="9"/><rect x="132" y="84" width="9" height="9"/>
+        <rect x="96" y="93" width="9" height="9"/><rect x="132" y="93" width="9" height="9"/>
+        <rect x="96" y="102" width="9" height="9"/><rect x="132" y="102" width="9" height="9"/>
+      </g>
+      <g fill="#faf7f2">
+        <rect x="146" y="96" width="45" height="9"/><rect x="146" y="105" width="9" height="9"/>
+        <rect x="146" y="114" width="36" height="9"/><rect x="146" y="123" width="9" height="9"/>
+        <rect x="146" y="132" width="45" height="9"/>
+      </g>
+    </svg>
+    <div class="logo-text">
       <div class="logo">Chro<span>mix</span></div>
       <div class="tagline">Mix · Paint · Compare</div>
+    </div>
+  </div>
 
       <div class="form-section">
         <span class="form-label">Картинка</span>
@@ -26,7 +78,9 @@
           <button class="opt-btn" data-val="1">Лес</button>
           <button class="opt-btn" data-val="2">Океан</button>
           <button class="opt-btn" data-val="3">Город</button>
+          <button class="opt-btn" data-val="4" id="custom-img-btn">📁 Своя</button>
         </div>
+        <input type="file" id="custom-file-input" accept="image/*" style="display:none" />
       </div>
 
       <div class="form-section">

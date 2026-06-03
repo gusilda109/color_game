@@ -6,6 +6,7 @@ const state = {
   imageIdx:          0,
   numColors:         6,
   paintStyle:        'watercolor',
+  poolMethod:        'max',  // метод уменьшения своей картинки: 'max' | 'avg'
 
   palette:           [],
   selectedPaletteIdx: -1,
@@ -257,5 +258,7 @@ function calculateResult() {
     accuracy: Math.round(accuracy),
     coverage: Math.round(coverage * 100),
     total:    Math.round(totalScore),
+    // макс. возможное расстояние между цветами (для нормировки карты "Разница")
+    maxDist:  Math.sqrt(255 * 255 * 3),
   };
 }

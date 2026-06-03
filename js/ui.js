@@ -203,6 +203,20 @@ document.getElementById('finish-btn').addEventListener('click', () => {
   showScreen('result-screen');
 });
 
+/* Подглядеть по клавише M (зажать — смотреть, отпустить — скрыть).
+   Используем e.code, чтобы работало и в русской раскладке (физическая клавиша M). */
+window.addEventListener('keydown', e => {
+  if (e.code !== 'KeyM' || e.repeat) return;
+  const overlay = document.getElementById('peek-overlay');
+  if (overlay) overlay.classList.add('visible');
+});
+
+window.addEventListener('keyup', e => {
+  if (e.code !== 'KeyM') return;
+  const overlay = document.getElementById('peek-overlay');
+  if (overlay) overlay.classList.remove('visible');
+});
+
 /* ── Result screen ──────────────────────────────────────────── */
 
 function buildResultScreen() {
@@ -281,6 +295,11 @@ document.getElementById('menu-btn').addEventListener('click', () => {
 });
 
 document.getElementById('next-btn').addEventListener('click', () => {
-  state.imageIdx = (state.imageIdx + 1) % IMAGES.length;
+  let next = (state.imageIdx + 1) % IMAGES.length;
+  // Пропускаем слот своей картинки, если в неё ничего не загружено.
+  if (IMAGES[next].type === 'custom' && !IMAGES[next].colorMap) {
+    next = (next + 1) % IMAGES.length;
+  }
+  state.imageIdx = next;
   startNewGame();
 });

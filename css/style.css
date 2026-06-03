@@ -387,11 +387,21 @@ body {
 .tool-btn:hover  { border-color: var(--ink3); color: var(--ink); }
 .tool-btn.active { background: var(--ink); border-color: var(--ink); color: var(--paper); }
 
-.sidebar-actions { display: flex; gap: 5px; margin-top: auto; flex-wrap: wrap; }
+.sidebar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  /* margin-top: auto  убрали — блок теперь сразу под секцией "Инструмент" */
+}
+
+.logo-row { display: flex; align-items: center; gap: 1.1rem; margin-bottom: 2.5rem; }
+.logo-mark { width: 88px; height: auto; flex-shrink: 0; image-rendering: pixelated; }
+.logo-text .logo { margin-bottom: 0.2rem; }
+.logo-text .tagline { margin-bottom: 0; }
 
 .action-btn {
-  flex: 1;
-  min-width: 60px;
+  flex: 1 1 0;
+  min-width: 0;                /* было 60px — из-за него текст вылезал из кнопки */
   padding: 0.5rem 0.3rem;
   border-radius: 2px;
   font-family: 'DM Mono', monospace;
@@ -403,7 +413,12 @@ body {
   background: transparent;
   color: var(--ink2);
   white-space: nowrap;
+  overflow: hidden;            /* если совсем не влезает — аккуратно обрежется */
+  text-overflow: ellipsis;
 }
+
+/* "Завершить" занимает всю ширину на отдельной строке */
+.action-btn.primary { flex-basis: 100%; }
 .action-btn:hover { border-color: var(--ink3); color: var(--ink); }
 .action-btn.primary {
   background: var(--accent);
