@@ -4,109 +4,207 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chromix — Paint by Color</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <base href="/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/landing.css" />
 </head>
 <body>
 
   <div id="tooltip"></div>
   <div id="toaster"></div>
 
-  <!-- ═══════════════════════════ START SCREEN ═══════════════════════════ -->
-  <div class="screen active" id="start-screen">
-    <div class="start-card">
-  <div class="logo-row">
-    <svg class="logo-mark" viewBox="34 20 168 162" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" aria-label="Кошкин и Ерченко">
-      <g fill="#c0392b">
-        <rect x="64" y="34" width="48" height="12"/><rect x="52" y="46" width="72" height="12"/>
-        <rect x="40" y="58" width="96" height="12"/><rect x="40" y="70" width="96" height="12"/>
-        <rect x="40" y="82" width="96" height="12"/><rect x="40" y="94" width="96" height="12"/>
-        <rect x="40" y="106" width="96" height="12"/><rect x="52" y="118" width="72" height="12"/>
-        <rect x="64" y="130" width="48" height="12"/>
-        <rect x="76" y="142" width="14" height="18"/><rect x="78" y="166" width="10" height="10"/>
-      </g>
-      <g fill="#2d54d8">
-        <rect x="124" y="34" width="48" height="12"/><rect x="112" y="46" width="72" height="12"/>
-        <rect x="100" y="58" width="96" height="12"/><rect x="100" y="70" width="96" height="12"/>
-        <rect x="100" y="82" width="96" height="12"/><rect x="100" y="94" width="96" height="12"/>
-        <rect x="100" y="106" width="96" height="12"/><rect x="112" y="118" width="72" height="12"/>
-        <rect x="124" y="130" width="48" height="12"/>
-        <rect x="160" y="142" width="14" height="16"/>
-      </g>
-      <g fill="#5b2a86">
-        <rect x="112" y="46" width="12" height="12"/><rect x="100" y="58" width="36" height="12"/>
-        <rect x="100" y="70" width="36" height="12"/><rect x="100" y="82" width="36" height="12"/>
-        <rect x="100" y="94" width="36" height="12"/><rect x="100" y="106" width="36" height="12"/>
-        <rect x="112" y="118" width="12" height="12"/>
-        <rect x="110" y="142" width="16" height="22"/>
-      </g>
-      <rect x="52" y="58" width="36" height="36" fill="#faf7f2"/><rect x="70" y="76" width="14" height="14" fill="#1a1714"/>
-      <rect x="148" y="58" width="36" height="36" fill="#faf7f2"/><rect x="152" y="72" width="14" height="14" fill="#1a1714"/>
-      <rect x="108" y="26" width="16" height="16" fill="#faf7f2"/><rect x="112" y="31" width="8" height="8" fill="#1a1714"/>
-      <g fill="#faf7f2">
-        <rect x="50" y="96" width="9" height="9"/><rect x="86" y="96" width="9" height="9"/>
-        <rect x="50" y="105" width="9" height="9"/><rect x="77" y="105" width="9" height="9"/>
-        <rect x="50" y="114" width="27" height="9"/>
-        <rect x="50" y="123" width="9" height="9"/><rect x="77" y="123" width="9" height="9"/>
-        <rect x="50" y="132" width="9" height="9"/><rect x="86" y="132" width="9" height="9"/>
-      </g>
-      <g fill="#faf7f2">
-        <rect x="96" y="66" width="9" height="9"/><rect x="132" y="66" width="9" height="9"/>
-        <rect x="96" y="75" width="18" height="9"/><rect x="123" y="75" width="18" height="9"/>
-        <rect x="96" y="84" width="9" height="9"/><rect x="114" y="84" width="9" height="9"/><rect x="132" y="84" width="9" height="9"/>
-        <rect x="96" y="93" width="9" height="9"/><rect x="132" y="93" width="9" height="9"/>
-        <rect x="96" y="102" width="9" height="9"/><rect x="132" y="102" width="9" height="9"/>
-      </g>
-      <g fill="#faf7f2">
-        <rect x="146" y="96" width="45" height="9"/><rect x="146" y="105" width="9" height="9"/>
-        <rect x="146" y="114" width="36" height="9"/><rect x="146" y="123" width="9" height="9"/>
-        <rect x="146" y="132" width="45" height="9"/>
-      </g>
-    </svg>
-    <div class="logo-text">
-      <div class="logo">Chro<span>mix</span></div>
-      <div class="tagline">Mix · Paint · Compare</div>
+  <div class="screen active" id="auth-screen">
+    <div class="bg-blobs" aria-hidden="true">
+      <span class="blob blob-r"></span><span class="blob blob-b"></span>
+      <span class="blob blob-p"></span><span class="blob blob-o"></span>
+    </div>
+
+    <div class="auth-stage">
+      <div class="auth-hero reveal" style="--d:0">
+        <div class="hero-mascot">
+          <svg class="logo-mark" viewBox="34 20 168 162" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" aria-label="Chromix">
+            <g fill="#c0392b">
+              <rect x="64" y="34" width="48" height="12"/><rect x="52" y="46" width="72" height="12"/>
+              <rect x="40" y="58" width="96" height="12"/><rect x="40" y="70" width="96" height="12"/>
+              <rect x="40" y="82" width="96" height="12"/><rect x="40" y="94" width="96" height="12"/>
+              <rect x="40" y="106" width="96" height="12"/><rect x="52" y="118" width="72" height="12"/>
+              <rect x="64" y="130" width="48" height="12"/>
+              <rect x="76" y="142" width="14" height="18"/><rect x="78" y="166" width="10" height="10"/>
+            </g>
+            <g fill="#2d54d8">
+              <rect x="124" y="34" width="48" height="12"/><rect x="112" y="46" width="72" height="12"/>
+              <rect x="100" y="58" width="96" height="12"/><rect x="100" y="70" width="96" height="12"/>
+              <rect x="100" y="82" width="96" height="12"/><rect x="100" y="94" width="96" height="12"/>
+              <rect x="100" y="106" width="96" height="12"/><rect x="112" y="118" width="72" height="12"/>
+              <rect x="124" y="130" width="48" height="12"/>
+              <rect x="160" y="142" width="14" height="16"/>
+            </g>
+            <g fill="#5b2a86">
+              <rect x="112" y="46" width="12" height="12"/><rect x="100" y="58" width="36" height="12"/>
+              <rect x="100" y="70" width="36" height="12"/><rect x="100" y="82" width="36" height="12"/>
+              <rect x="100" y="94" width="36" height="12"/><rect x="100" y="106" width="36" height="12"/>
+              <rect x="112" y="118" width="12" height="12"/>
+              <rect x="110" y="142" width="16" height="22"/>
+            </g>
+            <rect x="52" y="58" width="36" height="36" fill="#faf7f2"/><rect class="pupil" x="70" y="76" width="14" height="14" fill="#1a1714"/>
+            <rect x="148" y="58" width="36" height="36" fill="#faf7f2"/><rect class="pupil" x="152" y="72" width="14" height="14" fill="#1a1714"/>
+            <rect x="108" y="26" width="16" height="16" fill="#faf7f2"/><rect class="pupil" x="112" y="31" width="8" height="8" fill="#1a1714"/>
+            <g fill="#faf7f2">
+              <rect x="50" y="96" width="9" height="9"/><rect x="86" y="96" width="9" height="9"/>
+              <rect x="50" y="105" width="9" height="9"/><rect x="77" y="105" width="9" height="9"/>
+              <rect x="50" y="114" width="27" height="9"/>
+              <rect x="50" y="123" width="9" height="9"/><rect x="77" y="123" width="9" height="9"/>
+              <rect x="50" y="132" width="9" height="9"/><rect x="86" y="132" width="9" height="9"/>
+            </g>
+            <g fill="#faf7f2">
+              <rect x="96" y="66" width="9" height="9"/><rect x="132" y="66" width="9" height="9"/>
+              <rect x="96" y="75" width="18" height="9"/><rect x="123" y="75" width="18" height="9"/>
+              <rect x="96" y="84" width="9" height="9"/><rect x="114" y="84" width="9" height="9"/><rect x="132" y="84" width="9" height="9"/>
+              <rect x="96" y="93" width="9" height="9"/><rect x="132" y="93" width="9" height="9"/>
+              <rect x="96" y="102" width="9" height="9"/><rect x="132" y="102" width="9" height="9"/>
+            </g>
+            <g fill="#faf7f2">
+              <rect x="146" y="96" width="45" height="9"/><rect x="146" y="105" width="9" height="9"/>
+              <rect x="146" y="114" width="36" height="9"/><rect x="146" y="123" width="9" height="9"/>
+              <rect x="146" y="132" width="45" height="9"/>
+            </g>
+          </svg>
+        </div>
+        <h1 class="big-logo">Chro<span>mix</span></h1>
+        <div class="tagline">Mix · Paint · Compare</div>
+        <p class="hero-blurb">Запомни картинку — и воссоздай её по памяти, смешивая краски пиксель за пикселем.</p>
+      </div>
+
+      <div class="auth-card reveal" style="--d:1">
+        <div class="auth-card-title">Войдите, чтобы играть</div>
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-mode="login">Вход</button>
+          <button class="auth-tab" data-mode="register">Регистрация</button>
+        </div>
+        <input class="auth-input" id="auth-user" type="text" placeholder="Имя пользователя" autocomplete="username" />
+        <input class="auth-input" id="auth-pass" type="password" placeholder="Пароль" autocomplete="current-password" />
+        <div class="auth-error" id="auth-error"></div>
+        <button class="start-btn cta" id="auth-submit">Войти</button>
+      </div>
     </div>
   </div>
 
-      <div class="form-section">
-        <span class="form-label">Картинка</span>
-        <div class="option-row" id="img-opts">
-          <button class="opt-btn selected" data-val="0">Закат</button>
-          <button class="opt-btn" data-val="1">Лес</button>
-          <button class="opt-btn" data-val="2">Океан</button>
-          <button class="opt-btn" data-val="3">Город</button>
-          <button class="opt-btn" data-val="4" id="custom-img-btn">📁 Своя</button>
-        </div>
-        <input type="file" id="custom-file-input" accept="image/*" style="display:none" />
+  <div class="screen" id="start-screen">
+    <div class="bg-blobs" aria-hidden="true">
+      <span class="blob blob-r"></span>
+      <span class="blob blob-b"></span>
+      <span class="blob blob-p"></span>
+      <span class="blob blob-o"></span>
+    </div>
+
+    <div class="start-stage">
+      <div class="topbar reveal" style="--d:0">
+        <div class="topbar-greeting">Привет,<br><b id="user-name">—</b></div>
+        <nav class="topnav">
+          <button class="nav-btn" id="daily-btn"><span class="nav-ico">🗓</span>Картина дня</button>
+          <button class="nav-btn" id="gallery-btn"><span class="nav-ico">🏆</span>Галерея</button>
+          <button class="nav-btn" id="profile-btn"><span class="nav-ico">👤</span>Кабинет</button>
+          <button class="nav-btn nav-btn-ghost" id="logout-btn">Выход</button>
+        </nav>
       </div>
 
-      <div class="form-section">
-        <span class="form-label">Цветов в палитре</span>
-        <div class="option-row" id="colors-opts">
-          <button class="opt-btn" data-val="4">4</button>
-          <button class="opt-btn selected" data-val="6">6</button>
-          <button class="opt-btn" data-val="8">8</button>
-          <button class="opt-btn" data-val="12">12</button>
+      <div class="hero reveal" style="--d:1">
+        <div class="hero-mascot">
+          <svg class="logo-mark" viewBox="34 20 168 162" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" aria-label="Кошкин и Ерченко">
+            <g fill="#c0392b">
+              <rect x="64" y="34" width="48" height="12"/><rect x="52" y="46" width="72" height="12"/>
+              <rect x="40" y="58" width="96" height="12"/><rect x="40" y="70" width="96" height="12"/>
+              <rect x="40" y="82" width="96" height="12"/><rect x="40" y="94" width="96" height="12"/>
+              <rect x="40" y="106" width="96" height="12"/><rect x="52" y="118" width="72" height="12"/>
+              <rect x="64" y="130" width="48" height="12"/>
+              <rect x="76" y="142" width="14" height="18"/><rect x="78" y="166" width="10" height="10"/>
+            </g>
+            <g fill="#2d54d8">
+              <rect x="124" y="34" width="48" height="12"/><rect x="112" y="46" width="72" height="12"/>
+              <rect x="100" y="58" width="96" height="12"/><rect x="100" y="70" width="96" height="12"/>
+              <rect x="100" y="82" width="96" height="12"/><rect x="100" y="94" width="96" height="12"/>
+              <rect x="100" y="106" width="96" height="12"/><rect x="112" y="118" width="72" height="12"/>
+              <rect x="124" y="130" width="48" height="12"/>
+              <rect x="160" y="142" width="14" height="16"/>
+            </g>
+            <g fill="#5b2a86">
+              <rect x="112" y="46" width="12" height="12"/><rect x="100" y="58" width="36" height="12"/>
+              <rect x="100" y="70" width="36" height="12"/><rect x="100" y="82" width="36" height="12"/>
+              <rect x="100" y="94" width="36" height="12"/><rect x="100" y="106" width="36" height="12"/>
+              <rect x="112" y="118" width="12" height="12"/>
+              <rect x="110" y="142" width="16" height="22"/>
+            </g>
+            <rect x="52" y="58" width="36" height="36" fill="#faf7f2"/><rect class="pupil" x="70" y="76" width="14" height="14" fill="#1a1714"/>
+            <rect x="148" y="58" width="36" height="36" fill="#faf7f2"/><rect class="pupil" x="152" y="72" width="14" height="14" fill="#1a1714"/>
+            <rect x="108" y="26" width="16" height="16" fill="#faf7f2"/><rect class="pupil" x="112" y="31" width="8" height="8" fill="#1a1714"/>
+            <g fill="#faf7f2">
+              <rect x="50" y="96" width="9" height="9"/><rect x="86" y="96" width="9" height="9"/>
+              <rect x="50" y="105" width="9" height="9"/><rect x="77" y="105" width="9" height="9"/>
+              <rect x="50" y="114" width="27" height="9"/>
+              <rect x="50" y="123" width="9" height="9"/><rect x="77" y="123" width="9" height="9"/>
+              <rect x="50" y="132" width="9" height="9"/><rect x="86" y="132" width="9" height="9"/>
+            </g>
+            <g fill="#faf7f2">
+              <rect x="96" y="66" width="9" height="9"/><rect x="132" y="66" width="9" height="9"/>
+              <rect x="96" y="75" width="18" height="9"/><rect x="123" y="75" width="18" height="9"/>
+              <rect x="96" y="84" width="9" height="9"/><rect x="114" y="84" width="9" height="9"/><rect x="132" y="84" width="9" height="9"/>
+              <rect x="96" y="93" width="9" height="9"/><rect x="132" y="93" width="9" height="9"/>
+              <rect x="96" y="102" width="9" height="9"/><rect x="132" y="102" width="9" height="9"/>
+            </g>
+            <g fill="#faf7f2">
+              <rect x="146" y="96" width="45" height="9"/><rect x="146" y="105" width="9" height="9"/>
+              <rect x="146" y="114" width="36" height="9"/><rect x="146" y="123" width="9" height="9"/>
+              <rect x="146" y="132" width="45" height="9"/>
+            </g>
+          </svg>
+        </div>
+        <div class="hero-text">
+          <h1 class="big-logo">Chro<span>mix</span></h1>
+          <div class="tagline">Mix · Paint · Compare</div>
+          <p class="hero-blurb">Запомни картинку — и воссоздай её по памяти, смешивая краски пиксель за пикселем.</p>
         </div>
       </div>
 
-      <div class="form-section">
-        <span class="form-label">Стиль кисти</span>
-        <div class="option-row" id="style-opts">
-          <button class="opt-btn selected" data-val="watercolor">Акварель</button>
-          <button class="opt-btn" data-val="oil">Масло</button>
-          <button class="opt-btn" data-val="gouache">Гуашь</button>
+      <div class="start-panel reveal" style="--d:2">
+        <div class="form-section">
+          <span class="form-label">Картинка</span>
+          <div class="option-row" id="img-opts">
+            <button class="opt-btn selected" data-val="0">Закат</button>
+            <button class="opt-btn" data-val="1">Лес</button>
+            <button class="opt-btn" data-val="2">Океан</button>
+            <button class="opt-btn" data-val="3">Город</button>
+            <button class="opt-btn" data-val="4" id="custom-img-btn">📁 Своя</button>
+          </div>
+          <input type="file" id="custom-file-input" accept="image/*" style="display:none" />
         </div>
-      </div>
 
-      <button class="start-btn" id="start-btn">Посмотреть картинку →</button>
+        <div class="form-section">
+          <span class="form-label">Цветов в палитре</span>
+          <div class="option-row" id="colors-opts">
+            <button class="opt-btn" data-val="4">4</button>
+            <button class="opt-btn selected" data-val="6">6</button>
+            <button class="opt-btn" data-val="8">8</button>
+            <button class="opt-btn" data-val="12">12</button>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <span class="form-label">Стиль кисти</span>
+          <div class="option-row" id="style-opts">
+            <button class="opt-btn selected" data-val="watercolor">Акварель</button>
+            <button class="opt-btn" data-val="oil">Масло</button>
+            <button class="opt-btn" data-val="gouache">Гуашь</button>
+          </div>
+        </div>
+
+        <button class="start-btn cta" id="start-btn">Посмотреть картинку →</button>
+      </div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════ PREVIEW SCREEN ════════════════════════ -->
   <div class="screen" id="preview-screen">
     <div class="preview-layout">
       <div class="preview-header">
@@ -126,7 +224,6 @@
     </div>
   </div>
 
-  <!-- ═══════════════════════════ GAME SCREEN ═══════════════════════════ -->
   <div class="screen" id="game-screen">
     <div class="game-layout">
       <aside class="sidebar">
@@ -193,11 +290,13 @@
     </div>
   </div>
 
-  <!-- ═══════════════════════════ RESULT SCREEN ════════════════════════ -->
   <div class="screen" id="result-screen">
     <div class="result-card">
       <div class="result-title" id="result-title">Результат</div>
       <div class="result-subtitle" id="result-subtitle">Уровень завершён</div>
+      <div class="result-author" id="result-author" style="display:none;">
+        Работа игрока <a href="#" id="result-author-link"></a>
+      </div>
 
       <div class="result-canvases">
         <div class="result-canvas-block">
@@ -236,17 +335,80 @@
       </div>
 
       <div class="result-actions">
+        <button class="result-btn" id="result-share" style="display:none;">🔗 Поделиться</button>
         <button class="result-btn" id="retry-btn">Попробовать снова</button>
         <button class="result-btn" id="menu-btn">В меню</button>
         <button class="result-btn primary" id="next-btn">Следующий уровень →</button>
       </div>
     </div>
   </div>
-  <script src="mixbox.js"></script>
-  <script src="js/images.js"></script>
-  <script src="js/palette.js"></script>
-  <script src="js/game.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/main.js"></script>
+
+  <div class="screen" id="profile-screen">
+    <div class="result-card profile-card">
+      <div class="profile-header">
+        <div>
+          <div class="result-title" id="profile-name">—</div>
+          <div class="result-subtitle" id="profile-since">—</div>
+        </div>
+        <div class="profile-actions">
+          <button class="result-btn" id="profile-share">🔗 Поделиться</button>
+          <button class="result-btn" id="profile-back">← В меню</button>
+        </div>
+      </div>
+
+      <div class="score-row">
+        <div class="score-card"><div class="score-number" id="stat-games">0</div><div class="score-label">Игр сыграно</div></div>
+        <div class="score-card"><div class="score-number" id="stat-best">—</div><div class="score-label">Лучший балл</div></div>
+        <div class="score-card"><div class="score-number" id="stat-avg">—</div><div class="score-label">Средняя точность</div></div>
+      </div>
+
+      <div class="section-label" style="margin-top:0.5rem;">Достижения</div>
+      <div class="ach-grid" id="profile-achievements"></div>
+
+      <div class="section-label">Последние игры</div>
+      <div class="pr-table">
+        <div class="pr-row pr-head">
+          <span class="pr-img">Картинка</span>
+          <span class="pr-style">Стиль</span>
+          <span class="pr-num">Точность</span>
+          <span class="pr-num">Покрытие</span>
+          <span class="pr-num pr-total">Балл</span>
+          <span class="pr-date">Дата</span>
+        </div>
+        <div id="profile-rows"></div>
+      </div>
+      <div id="profile-empty" class="profile-empty" style="display:none;">Пока нет сыгранных игр — нарисуйте первую картину!</div>
+    </div>
+  </div>
+
+  <div class="screen" id="gallery-screen">
+    <div class="result-card gallery-card">
+      <div class="profile-header">
+        <div>
+          <div class="result-title">Сообщество</div>
+          <div class="result-subtitle">Картина дня и лучшие работы</div>
+        </div>
+        <button class="result-btn" id="gallery-back">← В меню</button>
+      </div>
+
+      <div class="section-label">🗓 Картина дня <span id="daily-name"></span></div>
+      <div class="daily-row">
+        <button class="start-btn" id="play-daily" style="max-width:260px;">Играть картину дня →</button>
+        <div class="daily-board" id="daily-board"></div>
+      </div>
+
+      <div class="section-label" style="margin-top:1.2rem;">🏆 Лучшие работы</div>
+      <div class="gallery-grid" id="gallery-grid"></div>
+      <div id="gallery-empty" class="profile-empty" style="display:none;">Пока нет работ — станьте первым!</div>
+    </div>
+  </div>
+
+  <script src="/mixbox.js"></script>
+  <script src="/js/images.js"></script>
+  <script src="/js/palette.js"></script>
+  <script src="/js/game.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/auth.js"></script>
 </body>
 </html>

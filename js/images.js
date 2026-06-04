@@ -1,9 +1,3 @@
-/**
- * images.js
- * Built-in image definitions and procedural pixel color generators.
- * Canvas size is fixed at 64×64.
- */
-
 const CANVAS_W = 64;
 const CANVAS_H = 64;
 
@@ -12,20 +6,13 @@ const IMAGES = [
   { name: 'Осенний лес',      type: 'forest' },
   { name: 'Морской берег',    type: 'ocean'  },
   { name: 'Ночной город',     type: 'city'   },
-  // index 4 — слот для пользовательской картинки.
-  // colorMap заполняется в момент загрузки файла (см. main.js).
   { name: 'Моя картинка',     type: 'custom', colorMap: null },
 ];
 
-/**
- * Returns a 2D array [row][col] of {r,g,b} for the given image type.
- */
 function generateImageColors(type, w, h) {
-  // Пользовательская картинка: используем уже подготовленную карту цветов.
   if (type === 'custom') {
     const ci = IMAGES.find(im => im.type === 'custom');
     if (ci && ci.colorMap) return ci.colorMap;
-    // запасной вариант — пустой "бумажный" холст
     const fallback = [];
     for (let row = 0; row < h; row++) {
       fallback.push([]);
@@ -44,15 +31,7 @@ function generateImageColors(type, w, h) {
   return map;
 }
 
-/**
- * Преобразует загруженное изображение в карту цветов targetW×targetH.
- * Уменьшение делается max pooling'ом: для каждой ячейки результата берётся
- * блок исходных пикселей, и по каждому каналу (R, G, B) берётся максимум.
- *
- * reduce: 'max' (по умолчанию, как просили) или 'avg' (усреднение — мягче для фото).
- */
 function imageToColorMap(imgEl, targetW, targetH, reduce = 'max') {
-  // 1. Рисуем исходник во временный canvas (с ограничением размера, чтобы не тормозило).
   const maxSide = 512;
   let sw = imgEl.naturalWidth  || imgEl.width;
   let sh = imgEl.naturalHeight || imgEl.height;
@@ -64,16 +43,13 @@ function imageToColorMap(imgEl, targetW, targetH, reduce = 'max') {
   tmp.width  = sw;
   tmp.height = sh;
   const tctx = tmp.getContext('2d');
-  // Прозрачные пиксели (PNG с альфой) станут цветом бумаги, а не чёрными.
   tctx.fillStyle = '#f9f5ee';
   tctx.fillRect(0, 0, sw, sh);
-  // Для пиксель-арта отключаем сглаживание — края остаются чёткими.
   tctx.imageSmoothingEnabled = false;
   tctx.drawImage(imgEl, 0, 0, sw, sh);
 
   const data = tctx.getImageData(0, 0, sw, sh).data;
 
-  // 2. Пулинг по блокам.
   const map = [];
   for (let row = 0; row < targetH; row++) {
     map.push([]);
@@ -94,7 +70,6 @@ function imageToColorMap(imgEl, targetW, targetH, reduce = 'max') {
         }
         r = sr / n; g = sg / n; b = sb / n;
       } else {
-        // MAX POOLING — максимум по каждому каналу внутри блока.
         let mr = 0, mg = 0, mb = 0;
         for (let y = y0; y < y1; y++) {
           for (let x = x0; x < x1; x++) {
@@ -125,45 +100,37 @@ function getPixelColor(type, col, row, w, h) {
 }
 
 function _sunset(nx, ny) {
-  // Sun position
   const sunX = 0.58, sunY = 0.38;
   const d = Math.sqrt((nx - sunX) ** 2 + (ny - sunY) ** 2);
 
-  // Mountain silhouettes (two overlapping ridges)
   const ridge1 = 0.52 + 0.20 * Math.sin(nx * Math.PI * 2.2 + 0.3);
   const ridge2 = 0.58 + 0.14 * Math.sin(nx * Math.PI * 3.8 + 1.1);
   const mTop = Math.min(ridge1, ridge2);
 
   if (ny > mTop) {
-    // Mountain body — dark silhouette with subtle warm tones at base
     const depth = (ny - mTop) / (1 - mTop);
     return lerp3([60, 35, 25], [30, 18, 12], [15, 8, 5], depth);
   }
 
-  // Sky
-  if (d < 0.04) return { r: 255, g: 235, b: 100 };  // sun core
+  if (d < 0.04) return { r: 255, g: 235, b: 100 };
   if (d < 0.09) return lerp3([255, 210, 70], [255, 170, 50], [250, 130, 30], (d - 0.04) / 0.05);
   if (d < 0.18) return lerp3([245, 120, 40], [220, 90, 35], [200, 70, 30], (d - 0.09) / 0.09);
 
-  // Sky zones: warm near horizon, purple/pink above
   if (ny > 0.55) return lerp3([220, 110, 50], [195, 80, 40], [170, 60, 35], (ny - 0.55) / 0.45);
   if (ny > 0.3)  return lerp3([190, 75, 100], [160, 55, 85], [130, 40, 70], (ny - 0.3) / 0.25);
   return lerp3([120, 50, 90], [90, 35, 75], [60, 20, 55], ny / 0.3);
 }
 
 function _forest(nx, ny, col, row) {
-  // Sky
   if (ny < 0.28) {
     return lerp3([95, 155, 215], [135, 185, 235], [175, 210, 245], ny / 0.28);
   }
 
-  // Individual tree silhouettes using sine to vary height
   const treeFreq = nx * Math.PI * 8;
   const treeH = 0.28 + 0.22 * Math.abs(Math.sin(treeFreq)) + 0.06 * Math.abs(Math.sin(treeFreq * 2.3));
   const inTree = ny < treeH;
 
   if (inTree) {
-    // Layered tree colours — lighter near top, darker inside
     const layer = Math.floor(nx * 10) % 3;
     const baseG = [70, 95, 55][layer];
     const baseR = [20, 35, 18][layer];
@@ -171,28 +138,22 @@ function _forest(nx, ny, col, row) {
     return lerp3([baseR + 20, baseG + 30, baseR], [baseR + 5, baseG + 5, baseR - 5], [baseR, baseG - 15, baseR - 10], t);
   }
 
-  // Ground — mossy, earthy
   const t = (ny - treeH) / (1 - treeH);
   return lerp3([95, 75, 35], [75, 55, 25], [55, 40, 18], t);
 }
 
 function _ocean(nx, ny, col, row) {
-  // Sky
   if (ny < 0.42) {
-    // Horizon glow
     const distH = Math.abs(ny - 0.42) / 0.42;
     if (ny > 0.35) return lerp3([255, 245, 190], [230, 200, 140], [200, 160, 100], (ny - 0.35) / 0.07);
     return lerp3([80, 145, 215], [110, 170, 230], [160, 200, 245], ny / 0.35);
   }
 
-  // Horizon line
   if (ny < 0.44) return { r: 255, g: 248, b: 195 };
 
-  // Ocean — deep blue to teal, with wave shimmer
   const wave = Math.sin(nx * Math.PI * 10 + ny * 15) * 0.04 + Math.sin(nx * Math.PI * 5 + ny * 8 + 1.2) * 0.02;
   const depth = (ny - 0.44) / 0.56;
   const base = lerp3([35, 110, 185], [20, 75, 150], [8, 42, 105], depth);
-  // Wave highlights
   if (wave > 0.04) {
     return lerp3([base.r, base.g, base.b], [180, 220, 240], [255, 255, 255], (wave - 0.04) / 0.02);
   }
@@ -200,9 +161,7 @@ function _ocean(nx, ny, col, row) {
 }
 
 function _city(nx, ny, col, row) {
-  // Night sky with subtle gradient
   if (ny < 0.48) {
-    // Stars
     const hash = Math.sin(col * 127.1 + row * 311.7) * 43758.5;
     const star = (hash - Math.floor(hash)) > 0.97;
     const skyBase = lerp3([5, 8, 28], [10, 14, 38], [15, 20, 48], ny / 0.48);
@@ -210,7 +169,6 @@ function _city(nx, ny, col, row) {
     return skyBase;
   }
 
-  // Buildings — varied widths and heights
   const bId   = Math.floor(nx * 14);
   const bHash = Math.sin(bId * 45.3) * 0.5 + 0.5;
   const bH    = 0.25 + bHash * 0.30;
@@ -220,7 +178,6 @@ function _city(nx, ny, col, row) {
     const relX = (nx * 14) % 1;
     const relY = (ny - bTop) / bH;
 
-    // Window grid
     const winCol = Math.floor(relX * 8);
     const winRow = Math.floor(relY * 16);
     const litHash = Math.sin(bId * 7.1 + winCol * 3.7 + winRow * 5.3) * 0.5 + 0.5;
@@ -230,11 +187,8 @@ function _city(nx, ny, col, row) {
     return lerp3([18, 18, 32], [25, 25, 45], [22, 22, 38], relY);
   }
 
-  // Street / ground glow
   return lerp3([20, 15, 25], [35, 25, 40], [28, 20, 32], (ny - 0.48) / 0.52);
 }
-
-/* ── Helpers ──────────────────────────────────────────────── */
 
 function lerp3(c1, c2, c3, t) {
   t = Math.max(0, Math.min(1, isNaN(t) ? 0 : t));

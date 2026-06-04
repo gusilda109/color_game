@@ -1,11 +1,3 @@
-/**
- * ui.js
- * UI rendering and interactions: palette, mix slots, preview timer,
- * peek button, tools, result screen.
- */
-
-/* ── Toast ──────────────────────────────────────────────────── */
-
 function showToast(msg, duration = 2200) {
   const t = document.getElementById('toaster');
   t.textContent = msg;
@@ -14,23 +6,18 @@ function showToast(msg, duration = 2200) {
   t._timer = setTimeout(() => { t.style.opacity = '0'; }, duration);
 }
 
-/* ── Screens ────────────────────────────────────────────────── */
-
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
-
-/* ── Preview screen ─────────────────────────────────────────── */
 
 let _previewTimer = null;
 
 function startPreview() {
   const img = IMAGES[state.imageIdx];
 
-  // Draw original on preview canvas
   const pc  = document.getElementById('preview-canvas');
-  const displaySize = 6; // 64*6 = 384px
+  const displaySize = 6;
   pc.width  = CANVAS_W * displaySize;
   pc.height = CANVAS_H * displaySize;
   pc.style.width  = (CANVAS_W * displaySize) + 'px';
@@ -46,7 +33,6 @@ function startPreview() {
 
   document.getElementById('preview-title').textContent = img.name;
 
-  // Countdown timer
   let seconds = 15;
   const timerEl = document.getElementById('preview-timer');
   timerEl.textContent = seconds;
@@ -83,8 +69,6 @@ function _launchGame() {
   showScreen('game-screen');
 }
 
-/* ── Tool selection ─────────────────────────────────────────── */
-
 document.getElementById('tool-pen').addEventListener('click', () => selectTool('pen'));
 document.getElementById('tool-brush').addEventListener('click', () => selectTool('brush'));
 document.getElementById('tool-fill').addEventListener('click', () => selectTool('fill'));
@@ -94,8 +78,6 @@ function selectTool(tool) {
   document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(`tool-${tool}`).classList.add('active');
 }
-
-/* ── Peek button ────────────────────────────────────────────── */
 
 let _peekTimeout = null;
 
@@ -113,8 +95,6 @@ document.getElementById('peek-btn').addEventListener('mouseleave', () => {
   const overlay = document.getElementById('peek-overlay');
   if (overlay) overlay.classList.remove('visible');
 });
-
-/* ── Palette UI ─────────────────────────────────────────────── */
 
 function renderPalette() {
   const grid = document.getElementById('palette-grid');
@@ -136,8 +116,6 @@ function selectPaletteColor(idx) {
   document.getElementById('selected-label').textContent = `rgb(${c.r}, ${c.g}, ${c.b})`;
   renderPalette();
 }
-
-/* ── Mix slots ──────────────────────────────────────────────── */
 
 function renderMixSlots() {
   document.querySelectorAll('.mix-slot').forEach((el, i) => {
@@ -188,8 +166,6 @@ document.getElementById('use-mix-btn').addEventListener('click', () => {
   showToast('Смешанный цвет добавлен в палитру!');
 });
 
-/* ── Game controls ──────────────────────────────────────────── */
-
 document.getElementById('clear-btn').addEventListener('click', () => {
   if (confirm('Стереть всё и начать заново?')) {
     state.pixelPainted = {};
@@ -203,8 +179,6 @@ document.getElementById('finish-btn').addEventListener('click', () => {
   showScreen('result-screen');
 });
 
-/* Подглядеть по клавише M (зажать — смотреть, отпустить — скрыть).
-   Используем e.code, чтобы работало и в русской раскладке (физическая клавиша M). */
 window.addEventListener('keydown', e => {
   if (e.code !== 'KeyM' || e.repeat) return;
   const overlay = document.getElementById('peek-overlay');
@@ -217,11 +191,11 @@ window.addEventListener('keyup', e => {
   if (overlay) overlay.classList.remove('visible');
 });
 
-/* ── Result screen ──────────────────────────────────────────── */
 
 function buildResultScreen() {
   const img    = IMAGES[state.imageIdx];
   const result = calculateResult();
+  saveScore(result, IMAGES[state.imageIdx].name, state.paintStyle);
   const { colorMap, pixelPainted } = state;
 
   document.getElementById('result-title').textContent =
@@ -238,7 +212,6 @@ function buildResultScreen() {
   totEl.textContent = result.total + '%';
   totEl.className   = 'score-number ' + grade;
 
-  // Draw result canvases at 4× scale
   const scale = 4;
   const rw = CANVAS_W * scale, rh = CANVAS_H * scale;
 
@@ -249,7 +222,6 @@ function buildResultScreen() {
     return c.getContext('2d');
   }
 
-  // Original
   const oc = setup('result-original');
   for (let row = 0; row < CANVAS_H; row++)
     for (let col = 0; col < CANVAS_W; col++) {
@@ -257,7 +229,6 @@ function buildResultScreen() {
       oc.fillRect(col * scale, row * scale, scale, scale);
     }
 
-  // Painted
   const pc = setup('result-painted');
   pc.fillStyle = '#f9f5ee';
   pc.fillRect(0, 0, rw, rh);
@@ -267,7 +238,6 @@ function buildResultScreen() {
     pc.fillRect(col * scale, row * scale, scale, scale);
   }
 
-  // Diff heatmap
   const dc = setup('result-diff');
   const maxDist = result.maxDist;
   for (let row = 0; row < CANVAS_H; row++)
@@ -296,7 +266,6 @@ document.getElementById('menu-btn').addEventListener('click', () => {
 
 document.getElementById('next-btn').addEventListener('click', () => {
   let next = (state.imageIdx + 1) % IMAGES.length;
-  // Пропускаем слот своей картинки, если в неё ничего не загружено.
   if (IMAGES[next].type === 'custom' && !IMAGES[next].colorMap) {
     next = (next + 1) % IMAGES.length;
   }

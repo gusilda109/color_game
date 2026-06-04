@@ -6,18 +6,18 @@ const state = {
   imageIdx:          0,
   numColors:         6,
   paintStyle:        'watercolor',
-  poolMethod:        'max',  // метод уменьшения своей картинки: 'max' | 'avg'
+  poolMethod:        'max',
 
   palette:           [],
   selectedPaletteIdx: -1,
   mixSlots:          [null, null, null],
   _mixedColor:       null,
 
-  colorMap:          [],    // original [row][col] = {r,g,b}
-  pixelPainted:      {},    // "col,row" -> {r,g,b}
+  colorMap:          [],
+  pixelPainted:      {},
 
   pixelSize:         8,
-  tool:              'pen', // 'pen' | 'brush' | 'fill'
+  tool:              'pen',
 
   _isDrawing:        false,
 };
@@ -72,15 +72,12 @@ function _buildPeekOverlay() {
   }
 }
 
-/* рендер */
-
 function renderGame() {
   const { pixelPainted, pixelSize, paintStyle } = state;
 
   ctx.fillStyle = '#f9f5ee';
   ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
 
-  // Draw painted pixels
   for (const key in pixelPainted) {
     const [col, row] = key.split(',').map(Number);
     const c = pixelPainted[key];
@@ -105,7 +102,6 @@ function _drawPixelStyle(cx, x, y, ps, style) {
 
 function _drawGrid() {
   const { pixelSize } = state;
-  // Only draw grid if pixels are large enough to see it
   if (pixelSize < 7) return;
   ctx.strokeStyle = 'rgba(180,170,155,0.25)';
   ctx.lineWidth   = 0.5;
@@ -123,8 +119,6 @@ function _updateProgress() {
   document.getElementById('progress-info').textContent = `${Math.round(painted / total * 100)}% закрашено`;
 }
 
-/*рисование */
-
 function paintPixel(col, row) {
   if (col < 0 || col >= CANVAS_W || row < 0 || row >= CANVAS_H) return;
   if (state.selectedPaletteIdx < 0) { showToast('Выберите цвет из палитры!'); return; }
@@ -134,7 +128,6 @@ function paintPixel(col, row) {
   if (state.tool === 'pen') {
     state.pixelPainted[`${col},${row}`] = { ...color };
   } else if (state.tool === 'brush') {
-    // 3×3 brush
     for (let dr = -1; dr <= 1; dr++)
       for (let dc = -1; dc <= 1; dc++) {
         const nc = col + dc, nr = row + dr;
@@ -173,8 +166,6 @@ function _floodFill(startCol, startRow, fillColor) {
     queue.push([c+1,r],[c-1,r],[c,r+1],[c,r-1]);
   }
 }
-
-/* мышь */
 
 function _canvasCoords(e) {
   const rect   = gameCanvas.getBoundingClientRect();
@@ -218,8 +209,6 @@ gameCanvas.addEventListener('touchmove', e => {
 
 window.addEventListener('touchend', () => { state._isDrawing = false; });
 
-/* подсчет */
-
 function calculateResult() {
   const { pixelPainted, colorMap } = state;
   const total = CANVAS_W * CANVAS_H;
@@ -227,15 +216,12 @@ function calculateResult() {
   const paintedCount = paintedKeys.length;
   const coverage = paintedCount / total;
 
-  // Пороги для оценки точности (можно менять под свои нужды)
-  const PERFECT_THRESHOLD = 30;   // расстояние меньше 30 -> 1 балл
-  const GOOD_THRESHOLD    = 80;   // расстояние меньше 80 -> 0.5 балла
-  // иначе 0 баллов
+  const PERFECT_THRESHOLD = 30;
+  const GOOD_THRESHOLD    = 80;
 
-  let sumScorePainted = 0; // сумма баллов только по закрашенным пикселям
-  let sumScoreTotal = 0;   // сумма баллов по всем пикселям (незакрашенные дают 0)
+  let sumScorePainted = 0;
+  let sumScoreTotal = 0;
 
-  // Считаем баллы для закрашенных пикселей
   for (const key of paintedKeys) {
     const [col, row] = key.split(',').map(Number);
     const dist = colorDistance(colorMap[row][col], pixelPainted[key]);
@@ -249,16 +235,13 @@ function calculateResult() {
     sumScoreTotal += points;
   }
 
-  // Незакрашенные пиксели в sumScoreTotal уже дают 0 (мы их не добавляем)
-
   const accuracy = paintedCount === 0 ? 0 : (sumScorePainted / paintedCount) * 100;
   const totalScore = (sumScoreTotal / total) * 100;
 
   return {
     accuracy: Math.round(accuracy),
-    coverage: Math.round(coverage * 100),
+    coverage: Math.floor(coverage * 100),
     total:    Math.round(totalScore),
-    // макс. возможное расстояние между цветами (для нормировки карты "Разница")
     maxDist:  Math.sqrt(255 * 255 * 3),
   };
 }

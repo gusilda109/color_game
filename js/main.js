@@ -1,4 +1,3 @@
-
 function initOptionGroup(groupId, stateKey, transform) {
   document.getElementById(groupId).addEventListener('click', e => {
     const btn = e.target.closest('.opt-btn');
@@ -13,14 +12,10 @@ initOptionGroup('img-opts',    'imageIdx',   v => Number(v));
 initOptionGroup('colors-opts', 'numColors',  v => Number(v));
 initOptionGroup('style-opts',  'paintStyle', null);
 
-/* ── Загрузка своей картинки ───────────────────────────────── */
-
-// Клик по кнопке "Своя" открывает выбор файла.
 document.getElementById('custom-img-btn').addEventListener('click', () => {
   document.getElementById('custom-file-input').click();
 });
 
-// Когда файл выбран — читаем, грузим в <img>, прогоняем через max pooling до 64×64.
 document.getElementById('custom-file-input').addEventListener('change', e => {
   const file = e.target.files && e.target.files[0];
   if (!file) return;
@@ -43,7 +38,6 @@ document.getElementById('custom-file-input').addEventListener('change', e => {
   };
   reader.readAsDataURL(file);
 
-  // сбрасываем value, чтобы повторный выбор того же файла снова сработал
   e.target.value = '';
 });
 
@@ -51,9 +45,9 @@ document.getElementById('start-btn').addEventListener('click', startNewGame);
 
 
 function startNewGame() {
+  state.isDaily = false;
   const img = IMAGES[state.imageIdx];
 
-  // Если выбрана "Своя", но картинка ещё не загружена — попросим загрузить.
   if (img && img.type === 'custom' && !img.colorMap) {
     showToast('Сначала загрузите свою картинку');
     document.getElementById('custom-file-input').click();
