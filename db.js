@@ -12,14 +12,18 @@ db.exec(`
     created_at    TEXT    NOT NULL DEFAULT (datetime('now'))
   );
 
-  CREATE TABLE IF NOT EXISTS scores (
+CREATE TABLE IF NOT EXISTS scores (
     id         INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id    INTEGER NOT NULL,
+    token      TEXT,
     image      TEXT,
     style      TEXT,
     accuracy   INTEGER,
     coverage   INTEGER,
     total      INTEGER,
+    colormap   TEXT,
+    painted    TEXT,
+    daily_date TEXT,
     created_at TEXT    NOT NULL DEFAULT (datetime('now')),
     FOREIGN KEY (user_id) REFERENCES users(id)
   );
