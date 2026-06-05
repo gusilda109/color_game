@@ -267,10 +267,12 @@
             <button class="tool-btn active" id="tool-pen" title="Карандаш (1px)">✏️ 1px</button>
             <button class="tool-btn" id="tool-brush" title="Кисть (3px)">🖌 3px</button>
             <button class="tool-btn" id="tool-fill" title="Заливка">🪣 Fill</button>
+            <button class="tool-btn" id="tool-eyedrop" title="Пипетка-подсказка (−5% за каждую)">💧</button>
           </div>
         </div>
 
         <div class="sidebar-actions">
+          <button class="action-btn" id="coop-share-btn">👥 С другом</button>
           <button class="action-btn" id="clear-btn">Стереть</button>
           <button class="action-btn" id="peek-btn">👁 Подглянуть</button>
           <button class="action-btn primary" id="finish-btn">Завершить</button>
@@ -280,7 +282,11 @@
       <main class="canvas-area">
         <div class="canvas-header">
           <div class="canvas-title" id="canvas-title">—</div>
-          <div class="progress-info" id="progress-info">0% закрашено</div>
+          <div class="canvas-header-right">
+            <span class="coop-online" id="coop-online" style="display:none;">● 0 онлайн</span>
+            <button class="sound-toggle" id="sound-toggle" title="Звук вкл/выкл">🔊</button>
+            <div class="progress-info" id="progress-info">0% закрашено</div>
+          </div>
         </div>
         <div class="canvas-wrapper" id="canvas-wrapper">
           <canvas id="game-canvas"></canvas>
@@ -403,12 +409,48 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="coop-modal" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-title">Играть с другом</div>
+      <div class="modal-text">Выберите режим — по ссылке к вам сможет присоединиться другой игрок.</div>
+      <div class="modal-modes">
+        <button class="mode-card" id="coop-confirm-coop">
+          <span class="mode-emoji">🤝</span>
+          <span class="mode-name">Вместе</span>
+          <span class="mode-desc">Один общий холст на всех, в реальном времени</span>
+        </button>
+        <button class="mode-card" id="coop-confirm-duel">
+          <span class="mode-emoji">⚔️</span>
+          <span class="mode-name">Дуэль</span>
+          <span class="mode-desc">Каждый рисует своё — в конце сравним, кто точнее</span>
+        </button>
+      </div>
+      <div class="modal-actions">
+        <button class="result-btn" id="coop-cancel">Отмена</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="duel-screen">
+    <div class="result-card duel-card">
+      <div class="result-title" id="duel-title">Дуэль</div>
+      <div class="result-subtitle" id="duel-winner">—</div>
+      <div class="duel-grid" id="duel-grid"></div>
+      <div class="result-actions">
+        <button class="result-btn" id="duel-share">🔗 Позвать ещё</button>
+        <button class="result-btn primary" id="duel-menu">В меню</button>
+      </div>
+    </div>
+  </div>
+
   <script src="/mixbox.js"></script>
   <script src="/js/images.js"></script>
   <script src="/js/palette.js"></script>
   <script src="/js/game.js"></script>
   <script src="/js/ui.js"></script>
   <script src="/js/main.js"></script>
+  <script src="/js/collab.js"></script>
   <script src="/js/auth.js"></script>
+  <script src="/js/effects.js"></script>
 </body>
 </html>

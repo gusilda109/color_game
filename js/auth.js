@@ -1,3 +1,8 @@
+/**
+ * auth.js — авторизация, кабинет, публичный профиль (/u/имя),
+ * публичный результат (/r/код), картина дня, галерея (/gallery), достижения.
+ * Грузить ПОСЛЕДНИМ скриптом (после ui.js).
+ */
 
 async function api(path, opts = {}) {
   const res = await fetch(path, {
@@ -19,6 +24,7 @@ const Auth = {
   async logout()       { await api('/api/logout', { method: 'POST' }); this.user = null; },
 };
 
+/* ── кодирование холста ─────────────────────────────────────── */
 function bytesToB64(bytes) { let s = ''; for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]); return btoa(s); }
 function b64ToBytes(b64)  { const bin = atob(b64); const a = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i); return a; }
 function encodeColorMap(colorMap) {
@@ -37,6 +43,7 @@ function encodePainted(painted) {
   return bytesToB64(a);
 }
 
+// сохранить результат (+ флаг daily) и показать кнопку «Поделиться»
 async function saveScore(result, imageName, style) {
   const shareBtn = document.getElementById('result-share');
   if (!Auth.user) { if (shareBtn) shareBtn.style.display = 'none'; return; }
@@ -59,6 +66,7 @@ async function saveScore(result, imageName, style) {
   } catch (e) { if (shareBtn) shareBtn.style.display = 'none'; }
 }
 
+/* ── утилиты ────────────────────────────────────────────────── */
 function escapeHtml(s) {
   return String(s ?? '').replace(/[&<>"']/g, c =>
     ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
@@ -69,6 +77,7 @@ function fmtDate(s) {
   return isNaN(d) ? s : d.toLocaleDateString('ru-RU');
 }
 
+/* ── достижения ─────────────────────────────────────────────── */
 const ACHIEVEMENTS = [
   { id:'first',  icon:'🎨', title:'Первый мазок',  desc:'Завершить первую игру', test:a=>(a.games||0) >= 1 },
   { id:'ten',    icon:'🔥', title:'Разогрелся',    desc:'Сыграть 10 игр',        test:a=>(a.games||0) >= 10 },
@@ -94,6 +103,7 @@ function renderAchievements(a) {
   });
 }
 
+/* ── профиль (свой и публичный) ─────────────────────────────── */
 function renderProfile(data, { isPublic } = {}) {
   document.getElementById('profile-name').textContent  = data.user.username;
   document.getElementById('profile-since').textContent = 'на Chromix с ' + fmtDate(data.user.created_at);
@@ -177,6 +187,7 @@ async function shareProfile() {
   catch { showToast(url); }
 }
 
+/* ── просмотр результата по ссылке /r/код ───────────────────── */
 function renderSharedResult(data) {
   showScreen('result-screen');
   const scale = 4, rw = CANVAS_W * scale, rh = CANVAS_H * scale;
@@ -210,7 +221,7 @@ function renderSharedResult(data) {
     }
 
   document.getElementById('result-title').textContent    = data.image || 'Результат';
-  document.getElementById('result-subtitle').textContent = 'работа игрока ' + data.username;
+  document.getElementById('result-subtitle').textContent = fmtDate(data.created_at);
 
   const grade = data.accuracy >= 70 ? 'great' : data.accuracy >= 45 ? 'good' : 'poor';
   const acc = document.getElementById('score-accuracy'); acc.textContent = data.accuracy + '%'; acc.className = 'score-number ' + grade;
@@ -253,6 +264,7 @@ async function openSharedResult(token) {
   renderSharedResult(data);
 }
 
+/* ── картина дня ────────────────────────────────────────────── */
 async function playDaily() {
   let d;
   try { d = await api('/api/daily'); }
@@ -263,6 +275,7 @@ async function playDaily() {
   startPreview();
 }
 
+/* ── галерея ────────────────────────────────────────────────── */
 function galleryCard(w) {
   const card = document.createElement('div');
   card.className = 'gallery-item';
@@ -291,6 +304,7 @@ function galleryCard(w) {
 async function openGallery() {
   showScreen('gallery-screen');
 
+  // картина дня + дневной лидерборд
   try {
     const d = await api('/api/daily');
     const name = (typeof IMAGES !== 'undefined' && IMAGES[d.imageIdx]) ? IMAGES[d.imageIdx].name : '';
@@ -306,8 +320,9 @@ async function openGallery() {
         board.appendChild(row);
       });
     }
-  } catch (e) { }
+  } catch (e) { /* пропускаем */ }
 
+  // галерея работ
   try {
     const g = await api('/api/gallery');
     const grid = document.getElementById('gallery-grid');
@@ -317,9 +332,10 @@ async function openGallery() {
     if (!works.length) { empty.style.display = 'block'; return; }
     empty.style.display = 'none';
     works.forEach(w => grid.appendChild(galleryCard(w)));
-  } catch (e) { }
+  } catch (e) { /* пропускаем */ }
 }
 
+/* ── вход в приложение / UI ─────────────────────────────────── */
 function enterApp() {
   const nameEl = document.getElementById('user-name');
   if (nameEl) nameEl.textContent = Auth.user.username;
@@ -370,15 +386,18 @@ function initAuthUI() {
   });
 }
 
+/* ── старт: разбираем адрес ─────────────────────────────────── */
 (async function () {
   initAuthUI();
 
   const mResult  = location.pathname.match(/^\/r\/([A-Za-z0-9_-]+)\/?$/);
   const mProfile = location.pathname.match(/^\/u\/([^\/]+)\/?$/);
+  const mCollab  = location.pathname.match(/^\/c\/([A-Za-z0-9_-]+)\/?$/);
   const isGallery = /^\/gallery\/?$/.test(location.pathname);
 
   if (mResult)  { await Auth.refresh().catch(() => {}); openSharedResult(mResult[1]); return; }
   if (mProfile) { await Auth.refresh().catch(() => {}); openPublicProfile(decodeURIComponent(mProfile[1])); return; }
+  if (mCollab)  { await Auth.refresh().catch(() => {}); openCollab(mCollab[1]); return; }
   if (isGallery){ await Auth.refresh().catch(() => {}); openGallery(); return; }
 
   try {
