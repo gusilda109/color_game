@@ -164,19 +164,13 @@
 body::before {
   content: ''; position: fixed; inset: -20%; z-index: -2; pointer-events: none;
   background:
-    radial-gradient(38vmax 38vmax at 12% 14%, rgba(192,57,43,0.22), transparent 62%),
-    radial-gradient(40vmax 40vmax at 88% 24%, rgba(45,84,216,0.20), transparent 62%);
-  animation: bgDriftA 26s ease-in-out infinite alternate;
+    radial-gradient(40vmax 40vmax at 15% 18%, rgba(192,57,43,0.13), transparent 60%),
+    radial-gradient(42vmax 42vmax at 85% 28%, rgba(45,84,216,0.12), transparent 60%),
+    radial-gradient(38vmax 38vmax at 78% 86%, rgba(91,42,134,0.12), transparent 60%),
+    radial-gradient(40vmax 40vmax at 22% 82%, rgba(230,126,34,0.12), transparent 60%);
+  animation: bgshift 32s ease-in-out infinite alternate;
 }
-html::before {
-  content: ''; position: fixed; inset: -20%; z-index: -2; pointer-events: none;
-  background:
-    radial-gradient(42vmax 42vmax at 82% 86%, rgba(91,42,134,0.20), transparent 62%),
-    radial-gradient(38vmax 38vmax at 16% 84%, rgba(230,126,34,0.20), transparent 62%);
-  animation: bgDriftB 31s ease-in-out infinite alternate;
-}
-@keyframes bgDriftA { from { transform: translate(0,0) scale(1); }   to { transform: translate(6%, 4%) scale(1.16); } }
-@keyframes bgDriftB { from { transform: translate(0,0) scale(1); }   to { transform: translate(-5%,-4%) scale(1.13); } }
+@keyframes bgshift { from { transform: translate(0,0) scale(1) rotate(0); } to { transform: translate(2%, -2%) scale(1.08) rotate(2deg); } }
 
 body::after {
   content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.45;
@@ -220,8 +214,23 @@ body::after {
   #result-screen.active .result-card, #profile-screen.active .result-card,
   #gallery-screen.active .result-card, #preview-screen.active .preview-layout,
   #game-screen.active .game-layout { animation: none !important; }
-  html::before { animation: none !important; }
 }
+
+body::before {
+  background:
+    radial-gradient(38vmax 38vmax at 12% 14%, rgba(192,57,43,0.22), transparent 62%),
+    radial-gradient(40vmax 40vmax at 88% 24%, rgba(45,84,216,0.20), transparent 62%);
+  animation: bgDriftA 26s ease-in-out infinite alternate;
+}
+html::before {
+  content: ''; position: fixed; inset: -20%; z-index: -2; pointer-events: none;
+  background:
+    radial-gradient(42vmax 42vmax at 82% 86%, rgba(91,42,134,0.20), transparent 62%),
+    radial-gradient(38vmax 38vmax at 16% 84%, rgba(230,126,34,0.20), transparent 62%);
+  animation: bgDriftB 31s ease-in-out infinite alternate;
+}
+@keyframes bgDriftA { from { transform: translate(0,0) scale(1); }   to { transform: translate(6%, 4%) scale(1.16); } }
+@keyframes bgDriftB { from { transform: translate(0,0) scale(1); }   to { transform: translate(-5%,-4%) scale(1.13); } }
 
 .gallery-item { transition: transform .16s cubic-bezier(.2,.7,.2,1), box-shadow .2s, border-color .16s; }
 .gallery-item:hover { transform: translateY(-5px) scale(1.035); box-shadow: 0 12px 26px rgba(0,0,0,0.16); border-color: var(--accent); }
@@ -230,6 +239,10 @@ body::after {
 
 .daily-line { transition: background .12s; }
 .daily-line:hover { background: rgba(0,0,0,0.025); }
+
+@media (prefers-reduced-motion: reduce) {
+  html::before { animation: none !important; }
+}
 
 #collab-screen { align-items: center; justify-content: flex-start; padding: 2rem 1.5rem; overflow: auto; position: relative; }
 .collab-wrap { position: relative; z-index: 1; width: 100%; max-width: 920px; margin: 0 auto;
@@ -321,3 +334,11 @@ body::after {
 .sound-toggle:hover { transform: scale(1.15); background: rgba(0,0,0,0.05); }
 
 @media (prefers-reduced-motion: reduce) { .swatch-pop, #duel-screen.active .duel-card { animation: none !important; } }
+
+@media (max-width: 760px) {
+  #canvas-wrapper { width: 100%; max-width: 100%; overflow: hidden; }
+  #game-canvas, #peek-overlay, #coop-cursors { width: 100% !important; height: auto !important; }
+  #preview-canvas, #result-original, #result-painted, #result-diff, .duel-canvas, #collab-canvas, #collab-cursors { max-width: 100%; height: auto; }
+  #game-screen { overflow-y: auto; }
+  .game-layout { flex-direction: column; }
+}
